@@ -70,6 +70,24 @@
             background-color: #d4edda;
             color: #155724;
         }
+        .hidden {
+            display: none;
+        }
+        .marketing-message {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .marketing-message img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        .marketing-message p {
+            font-size: 1.2em;
+            color: #e74c3c;
+            font-weight: bold;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
@@ -103,6 +121,11 @@
         </div>
 
         <div id="message"></div>
+
+        <div id="marketingContent" class="marketing-message hidden">
+            <img src="download.jpg" alt="שריפת כסף בגיוס לא יעיל">
+            <p>בטח לא חשבתם שזה הסכום שהארגון שלכם שורף על גיוס לא יעיל של עובדים. אה, וכן, אנחנו יכולים לעזור לכם לכבות את השריפה הזו</p>
+        </div>
     </div>
 
     <script>
@@ -122,6 +145,7 @@
             document.getElementById('productivityRatio').textContent = 
                 `יחס פריון (הכנסה/עלות): ${productivityRatio.toFixed(2)}`;
 
+            document.getElementById('marketingContent').classList.remove('hidden');
             showMessage('החישוב הושלם בהצלחה', 'success');
         }
 
