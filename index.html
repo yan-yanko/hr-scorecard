@@ -38,6 +38,7 @@
         input {
             margin: 5px;
             padding: 5px;
+            width: 150px;
         }
         #message {
             margin: 20px;
@@ -52,6 +53,27 @@
             background-color: #f8d7da;
             color: #721c24;
         }
+        .calculator {
+            background-color: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .result {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+        .cost-breakdown {
+            text-align: right;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -59,20 +81,39 @@
         <h1>דוח מודל ADAPT לארגונים</h1>
         
         <div class="form-group">
-            <label>שם הארגון:</label>
-            <input type="text" id="orgName" placeholder="הכנס שם ארגון...">
-            <button onclick="loadData()">טען נתונים</button>
-        </div>
-
-        <div id="chart"></div>
-
-        <div class="form-group">
             <h3>עדכון ציונים</h3>
             <p>מלא את הציונים לכל ממד (1-5):</p>
             <div id="scores"></div>
-            <button onclick="saveData()">שמור ועדכן</button>
+            <button onclick="updateChart()">עדכן גרף</button>
         </div>
 
+        <div class="calculator">
+            <h3>מחשבון עלויות גיוס</h3>
+            <div class="input-group">
+                <label>מספר עובדים בארגון:</label>
+                <input type="number" id="employeeCount" min="1" value="100">
+            </div>
+            <div class="input-group">
+                <label>אחוז עזיבה שנתי:</label>
+                <input type="number" id="turnoverRate" min="0" max="100" value="15">
+            </div>
+            <div class="input-group">
+                <label>משכורת חודשית ממוצעת (₪):</label>
+                <input type="number" id="avgSalary" min="0" value="15000">
+            </div>
+            <button onclick="calculateCosts()">חשב עלויות</button>
+            
+            <div id="costResult" class="result" style="display: none;">
+                <div>סך עלויות גיוס שנתיות: <span id="totalCost">0</span> ₪</div>
+                <div class="cost-breakdown">
+                    <div>מספר עובדים שיש לגייס בשנה: <span id="replacementCount">0</span></div>
+                    <div>עלות גיוס לעובד: <span id="costPerEmployee">0</span> ₪</div>
+                    <div>אובדן פריון עבודה: <span id="productivityLoss">0</span> ₪</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="chart"></div>
         <div id="message"></div>
     </div>
 
@@ -85,7 +126,7 @@
             "מדדים ותוצאות"
         ];
 
-        const defaultScores = [4, 3, 5, 2, 4];
+        const defaultScores = [0, 0, 0, 0, 0];
 
         // יצירת שדות הקלט
         const scoresDiv = document.getElementById('scores');
@@ -94,18 +135,17 @@
             div.className = 'input-group';
             div.innerHTML = `
                 <label>${dim}</label>
-                <input type="number" id="score-${i}" min="1" max="5" step="1" value="${defaultScores[i]}">
+                <input type="number" id="score-${i}" min="1" max="5" step="1" value="0">
             `;
             scoresDiv.appendChild(div);
         });
 
-        function createChart(scores, orgName = 'הארגון שלי') {
+        function createChart(scores) {
             const data = [{
                 type: 'scatterpolar',
                 r: [...scores, scores[0]],
                 theta: [...dimensions, dimensions[0]],
-                fill: 'toself',
-                name: orgName
+                fill: 'toself'
             }];
 
             const layout = {
@@ -115,60 +155,48 @@
                         range: [0, 5]
                     }
                 },
-                showlegend: true,
-                title: `ניתוח מודל ADAPT - ${orgName}`
+                showlegend: false,
+                title: 'ניתוח מודל ADAPT'
             };
 
             Plotly.newPlot('chart', data, layout);
         }
 
-        function saveData() {
-            const orgName = document.getElementById('orgName').value;
-            if (!orgName) {
-                showMessage('נא להזין שם ארגון', 'error');
-                return;
-            }
-
+        function updateChart() {
             const scores = [];
             for (let i = 0; i < dimensions.length; i++) {
                 const score = parseInt(document.getElementById(`score-${i}`).value);
-                if (isNaN(score) || score < 1 || score > 5) {
+                if (isNaN(score) || score < 0 || score > 5) {
                     showMessage('נא להזין ציונים תקינים (1-5)', 'error');
                     return;
                 }
                 scores.push(score);
             }
 
-            localStorage.setItem(orgName, JSON.stringify({
-                scores,
-                dimensions,
-                timestamp: new Date().toISOString()
-            }));
-
-            createChart(scores, orgName);
-            showMessage('הנתונים נשמרו בהצלחה', 'success');
+            createChart(scores);
+            showMessage('הגרף עודכן בהצלחה', 'success');
         }
 
-        function loadData() {
-            const orgName = document.getElementById('orgName').value;
-            if (!orgName) {
-                showMessage('נא להזין שם ארגון', 'error');
+        function calculateCosts() {
+            const employeeCount = parseInt(document.getElementById('employeeCount').value);
+            const turnoverRate = parseInt(document.getElementById('turnoverRate').value) / 100;
+            const avgSalary = parseInt(document.getElementById('avgSalary').value);
+
+            if (isNaN(employeeCount) || isNaN(turnoverRate) || isNaN(avgSalary)) {
+                showMessage('נא להזין ערכים תקינים', 'error');
                 return;
             }
 
-            const data = localStorage.getItem(orgName);
-            if (!data) {
-                showMessage('לא נמצאו נתונים לארגון זה', 'error');
-                return;
-            }
+            const replacementCount = Math.round(employeeCount * turnoverRate);
+            const costPerEmployee = avgSalary * 3; // עלות גיוס מוערכת כ-3 משכורות
+            const productivityLoss = avgSalary * 2 * replacementCount; // אובדן פריון של חודשיים לכל עובד
+            const totalCost = (costPerEmployee * replacementCount) + productivityLoss;
 
-            const { scores } = JSON.parse(data);
-            scores.forEach((score, i) => {
-                document.getElementById(`score-${i}`).value = score;
-            });
-
-            createChart(scores, orgName);
-            showMessage('הנתונים נטענו בהצלחה', 'success');
+            document.getElementById('replacementCount').textContent = replacementCount;
+            document.getElementById('costPerEmployee').textContent = costPerEmployee.toLocaleString();
+            document.getElementById('productivityLoss').textContent = productivityLoss.toLocaleString();
+            document.getElementById('totalCost').textContent = totalCost.toLocaleString();
+            document.getElementById('costResult').style.display = 'block';
         }
 
         function showMessage(text, type) {
