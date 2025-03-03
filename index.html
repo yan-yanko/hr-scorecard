@@ -60,6 +60,12 @@
             font-weight: bold;
             margin-bottom: 10px;
         }
+        .result-highlight {
+            color: #e74c3c;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
         #message {
             margin-top: 20px;
             padding: 10px;
@@ -96,34 +102,35 @@
         
         <div class="form-group">
             <label>מספר עובדים:</label>
-            <input type="number" id="numEmployees" required>
+            <input type="number" id="numEmployees" min="1" required>
         </div>
 
         <div class="form-group">
-            <label>הכנסה שנתית (בש"ח):</label>
-            <input type="number" id="annualRevenue" required>
+            <label>משכורת ממוצעת לעובד (בש"ח לחודש):</label>
+            <input type="number" id="avgSalary" min="0" required>
         </div>
 
         <div class="form-group">
-            <label>עלות שכר שנתית (בש"ח):</label>
-            <input type="number" id="annualSalary" required>
+            <label>אחוז עובדים שעוזבים בשנה (%):</label>
+            <input type="number" id="turnoverRate" min="0" max="100" required>
         </div>
 
         <div style="text-align: center;">
-            <button onclick="calculateProductivity()">חשב פריון</button>
+            <button onclick="calculateProductivity()">חשב עלות פריון אבוד</button>
         </div>
 
         <div class="result-group">
             <div class="result-title">תוצאות:</div>
-            <div id="revenuePerEmployee"></div>
-            <div id="salaryPerEmployee"></div>
-            <div id="productivityRatio"></div>
+            <div id="numLeavingEmployees"></div>
+            <div id="replacementCost"></div>
+            <div id="trainingCost"></div>
+            <div id="productivityLoss" class="result-highlight"></div>
         </div>
 
         <div id="message"></div>
 
         <div id="marketingContent" class="marketing-message hidden">
-            <img src="download.jpg" alt="שריפת כסף בגיוס לא יעיל">
+            <img src="./download.jpg" alt="שריפת כסף בגיוס לא יעיל">
             <p>בטח לא חשבתם שזה הסכום שהארגון שלכם שורף על גיוס לא יעיל של עובדים. אה, וכן, אנחנו יכולים לעזור לכם לכבות את השריפה הזו</p>
         </div>
     </div>
@@ -131,19 +138,30 @@
     <script>
         function calculateProductivity() {
             const numEmployees = parseFloat(document.getElementById('numEmployees').value);
-            const annualRevenue = parseFloat(document.getElementById('annualRevenue').value);
-            const annualSalary = parseFloat(document.getElementById('annualSalary').value);
+            const avgSalary = parseFloat(document.getElementById('avgSalary').value);
+            const turnoverRate = parseFloat(document.getElementById('turnoverRate').value) / 100;
 
-            const revenuePerEmployee = annualRevenue / numEmployees;
-            const salaryPerEmployee = annualSalary / numEmployees;
-            const productivityRatio = revenuePerEmployee / salaryPerEmployee;
+            // חישוב מספר העובדים שעוזבים בשנה
+            const leavingEmployees = Math.round(numEmployees * turnoverRate);
+            
+            // עלות גיוס מוערכת (משכורת חודשית אחת)
+            const recruitmentCost = avgSalary * leavingEmployees;
+            
+            // עלות הכשרה מוערכת (3 חודשי משכורת)
+            const trainingCost = avgSalary * 3 * leavingEmployees;
+            
+            // אובדן פריון כולל (עלות גיוס + הכשרה)
+            const totalProductivityLoss = recruitmentCost + trainingCost;
 
-            document.getElementById('revenuePerEmployee').textContent = 
-                `הכנסה לעובד: ${revenuePerEmployee.toLocaleString()} ש"ח`;
-            document.getElementById('salaryPerEmployee').textContent = 
-                `עלות שכר לעובד: ${salaryPerEmployee.toLocaleString()} ש"ח`;
-            document.getElementById('productivityRatio').textContent = 
-                `יחס פריון (הכנסה/עלות): ${productivityRatio.toFixed(2)}`;
+            // הצגת התוצאות
+            document.getElementById('numLeavingEmployees').textContent = 
+                `מספר עובדים שעוזבים בשנה: ${leavingEmployees.toLocaleString()} עובדים`;
+            document.getElementById('replacementCost').textContent = 
+                `עלות גיוס מוערכת: ${recruitmentCost.toLocaleString()} ש"ח`;
+            document.getElementById('trainingCost').textContent = 
+                `עלות הכשרה מוערכת: ${trainingCost.toLocaleString()} ש"ח`;
+            document.getElementById('productivityLoss').textContent = 
+                `סך אובדן פריון שנתי: ${totalProductivityLoss.toLocaleString()} ש"ח`;
 
             document.getElementById('marketingContent').classList.remove('hidden');
             showMessage('החישוב הושלם בהצלחה', 'success');
