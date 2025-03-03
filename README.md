@@ -4,13 +4,13 @@
 
 ## גישה למערכת
 
-האפליקציה זמינה בכתובת: [https://hr-scorecard.onrender.com](https://hr-scorecard.onrender.com)
+האפליקציה זמינה בכתובת: [https://yan-yanko.github.io/hr-scorecard](https://yan-yanko.github.io/hr-scorecard)
 
 ## תכונות
 
 - הצגת ציונים בגרף רדאר (Spider Chart)
 - ממשק משתמש אינטואיטיבי בעברית
-- שמירת נתונים לכל ארגון
+- שמירת נתונים מקומית בדפדפן
 - אפשרות לטעינת נתונים קיימים
 - תצוגה ויזואלית של 5 ממדי המודל:
   - אסטרטגיה וכיוון
@@ -21,7 +21,7 @@
 
 ## שימוש במערכת
 
-1. היכנס למערכת בכתובת: [https://hr-scorecard.onrender.com](https://hr-scorecard.onrender.com)
+1. היכנס למערכת בכתובת: [https://yan-yanko.github.io/hr-scorecard](https://yan-yanko.github.io/hr-scorecard)
 2. הזן את שם הארגון שלך
 3. מלא את הציונים לכל אחד מהממדים (בסולם 1-5)
 4. לחץ על "שמור ועדכן" כדי לשמור את הנתונים
@@ -29,34 +29,17 @@
 
 ## פיתוח מקומי
 
-### הגדרת סביבת פיתוח
+### הרצה מקומית
 
-1. צור סביבה וירטואלית:
+1. Clone את המאגר:
 ```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-.\venv\Scripts\activate   # Windows
+git clone https://github.com/yan-yanko/hr-scorecard.git
+cd hr-scorecard
 ```
 
-2. התקן את התלויות:
-```bash
-pip install -r requirements.txt
-```
+2. פתח את הקובץ `index.html` בדפדפן
 
-3. הפעל את השרת המקומי:
-```bash
-python app.py
-```
-
-4. פתח את הדפדפן בכתובת: `http://127.0.0.1:8050`
-
-### הרצת בדיקות
-
-```bash
-pytest tests/
-```
-
-## תרומה לפרויקט
+### תרומה לפרויקט
 
 1. Fork את המאגר
 2. צור ענף חדש (`git checkout -b feature/amazing-feature`)

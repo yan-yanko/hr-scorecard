@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>דוח מודל ADAPT לארגונים</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            text-align: center;
+        }
+        .form-group {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .input-group {
+            margin: 10px;
+        }
+        button {
+            margin: 10px;
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input {
+            margin: 5px;
+            padding: 5px;
+        }
+        #message {
+            margin: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>דוח מודל ADAPT לארגונים</h1>
+        
+        <div class="form-group">
+            <label>שם הארגון:</label>
+            <input type="text" id="orgName" placeholder="הכנס שם ארגון...">
+            <button onclick="loadData()">טען נתונים</button>
+        </div>
+
+        <div id="chart"></div>
+
+        <div class="form-group">
+            <h3>עדכון ציונים</h3>
+            <p>מלא את הציונים לכל ממד (1-5):</p>
+            <div id="scores"></div>
+            <button onclick="saveData()">שמור ועדכן</button>
+        </div>
+
+        <div id="message"></div>
+    </div>
+
+    <script>
+        const dimensions = [
+            "אסטרטגיה וכיוון",
+            "יכולת הסתגלות",
+            "תהליכים ומבנה",
+            "תרבות ולמידה",
+            "מדדים ותוצאות"
+        ];
+
+        const defaultScores = [4, 3, 5, 2, 4];
+
+        // יצירת שדות הקלט
+        const scoresDiv = document.getElementById('scores');
+        dimensions.forEach((dim, i) => {
+            const div = document.createElement('div');
+            div.className = 'input-group';
+            div.innerHTML = `
+                <label>${dim}</label>
+                <input type="number" id="score-${i}" min="1" max="5" step="1" value="${defaultScores[i]}">
+            `;
+            scoresDiv.appendChild(div);
+        });
+
+        function createChart(scores, orgName = 'הארגון שלי') {
+            const data = [{
+                type: 'scatterpolar',
+                r: [...scores, scores[0]],
+                theta: [...dimensions, dimensions[0]],
+                fill: 'toself',
+                name: orgName
+            }];
+
+            const layout = {
+                polar: {
+                    radialaxis: {
+                        visible: true,
+                        range: [0, 5]
+                    }
+                },
+                showlegend: true,
+                title: `ניתוח מודל ADAPT - ${orgName}`
+            };
+
+            Plotly.newPlot('chart', data, layout);
+        }
+
+        function saveData() {
+            const orgName = document.getElementById('orgName').value;
+            if (!orgName) {
+                showMessage('נא להזין שם ארגון', 'error');
+                return;
+            }
+
+            const scores = [];
+            for (let i = 0; i < dimensions.length; i++) {
+                const score = parseInt(document.getElementById(`score-${i}`).value);
+                if (isNaN(score) || score < 1 || score > 5) {
+                    showMessage('נא להזין ציונים תקינים (1-5)', 'error');
+                    return;
+                }
+                scores.push(score);
+            }
+
+            localStorage.setItem(orgName, JSON.stringify({
+                scores,
+                dimensions,
+                timestamp: new Date().toISOString()
+            }));
+
+            createChart(scores, orgName);
+            showMessage('הנתונים נשמרו בהצלחה', 'success');
+        }
+
+        function loadData() {
+            const orgName = document.getElementById('orgName').value;
+            if (!orgName) {
+                showMessage('נא להזין שם ארגון', 'error');
+                return;
+            }
+
+            const data = localStorage.getItem(orgName);
+            if (!data) {
+                showMessage('לא נמצאו נתונים לארגון זה', 'error');
+                return;
+            }
+
+            const { scores } = JSON.parse(data);
+            scores.forEach((score, i) => {
+                document.getElementById(`score-${i}`).value = score;
+            });
+
+            createChart(scores, orgName);
+            showMessage('הנתונים נטענו בהצלחה', 'success');
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = type;
+        }
+
+        // יצירת גרף ראשוני
+        createChart(defaultScores);
+    </script>
+</body>
+</html> 
