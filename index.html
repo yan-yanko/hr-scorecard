@@ -10,85 +10,201 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #f5f5f5;
         }
         .container {
             text-align: center;
         }
-        .form-group {
-            margin: 20px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+        .step {
+            background-color: white;
+            margin: 20px auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 800px;
+            display: none;
+        }
+        .step.active {
+            display: block;
+        }
+        .dimension-info {
+            text-align: right;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
         }
         .input-group {
-            margin: 10px;
+            margin: 15px 0;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .input-group p {
+            color: #666;
+            margin-bottom: 15px;
         }
         button {
             margin: 10px;
-            padding: 8px 16px;
+            padding: 12px 24px;
             background-color: #007bff;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
         }
         button:hover {
             background-color: #0056b3;
         }
         input {
             margin: 5px;
-            padding: 5px;
+            padding: 8px;
             width: 150px;
-        }
-        #message {
-            margin: 20px;
-            padding: 10px;
+            border: 1px solid #ddd;
             border-radius: 4px;
-        }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .calculator {
-            background-color: #f8f9fa;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 8px;
         }
         .result {
             font-size: 1.2em;
-            font-weight: bold;
             margin: 20px 0;
-            padding: 15px;
+            padding: 20px;
             background-color: #e9ecef;
-            border-radius: 4px;
+            border-radius: 8px;
         }
-        .cost-breakdown {
+        .recommendations {
+            text-align: right;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #d4edda;
+            border-radius: 8px;
+            color: #155724;
+        }
+        .calculation-explanation {
             text-align: right;
             margin: 15px 0;
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 4px;
+            padding: 15px;
+            background-color: #fff3cd;
+            border-radius: 8px;
+            color: #856404;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background-color: #007bff;
+            transition: width 0.3s ease;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>דוח מודל ADAPT לארגונים</h1>
-        
-        <div class="form-group">
-            <h3>עדכון ציונים</h3>
-            <p>מלא את הציונים לכל ממד (1-5):</p>
-            <div id="scores"></div>
-            <button onclick="updateChart()">עדכן גרף</button>
+        <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
         </div>
 
-        <div class="calculator">
-            <h3>מחשבון עלויות גיוס</h3>
+        <!-- שלב 1: סקורקארד -->
+        <div id="step1" class="step active">
+            <h2>שלב 1: אסטרטגיה וכיוון</h2>
+            <div class="dimension-info">
+                <p>ממד זה בוחן את היכולת של הארגון להגדיר ולתקשר חזון ברור, אסטרטגיה ומטרות. כולל:</p>
+                <ul>
+                    <li>הגדרת חזון ואסטרטגיה ברורים</li>
+                    <li>תקשור היעדים לכל רמות הארגון</li>
+                    <li>יכולת ביצוע והטמעה של שינויים אסטרטגיים</li>
+                </ul>
+            </div>
+            <div class="input-group">
+                <label>דרג את הארגון בממד זה (1-5):</label>
+                <input type="number" id="score-0" min="1" max="5" step="1" required>
+            </div>
+            <button onclick="nextStep()">המשך לשלב הבא</button>
+        </div>
+
+        <div id="step2" class="step">
+            <h2>שלב 2: יכולת הסתגלות</h2>
+            <div class="dimension-info">
+                <p>ממד זה בוחן את היכולת של הארגון להגיב ולהסתגל לשינויים בסביבה העסקית. כולל:</p>
+                <ul>
+                    <li>גמישות ארגונית</li>
+                    <li>יכולת זיהוי והגבה לשינויים בשוק</li>
+                    <li>חדשנות ויצירתיות</li>
+                </ul>
+            </div>
+            <div class="input-group">
+                <label>דרג את הארגון בממד זה (1-5):</label>
+                <input type="number" id="score-1" min="1" max="5" step="1" required>
+            </div>
+            <button onclick="nextStep()">המשך לשלב הבא</button>
+        </div>
+
+        <div id="step3" class="step">
+            <h2>שלב 3: תהליכים ומבנה</h2>
+            <div class="dimension-info">
+                <p>ממד זה בוחן את היעילות והאפקטיביות של תהליכי העבודה והמבנה הארגוני. כולל:</p>
+                <ul>
+                    <li>יעילות תהליכי עבודה</li>
+                    <li>התאמת המבנה הארגוני לאסטרטגיה</li>
+                    <li>שיתוף פעולה בין יחידות</li>
+                </ul>
+            </div>
+            <div class="input-group">
+                <label>דרג את הארגון בממד זה (1-5):</label>
+                <input type="number" id="score-2" min="1" max="5" step="1" required>
+            </div>
+            <button onclick="nextStep()">המשך לשלב הבא</button>
+        </div>
+
+        <div id="step4" class="step">
+            <h2>שלב 4: תרבות ולמידה</h2>
+            <div class="dimension-info">
+                <p>ממד זה בוחן את התרבות הארגונית ויכולת הלמידה וההתפתחות. כולל:</p>
+                <ul>
+                    <li>תרבות ארגונית תומכת</li>
+                    <li>פיתוח והכשרת עובדים</li>
+                    <li>למידה ארגונית מתמדת</li>
+                </ul>
+            </div>
+            <div class="input-group">
+                <label>דרג את הארגון בממד זה (1-5):</label>
+                <input type="number" id="score-3" min="1" max="5" step="1" required>
+            </div>
+            <button onclick="nextStep()">המשך לשלב הבא</button>
+        </div>
+
+        <div id="step5" class="step">
+            <h2>שלב 5: מדדים ותוצאות</h2>
+            <div class="dimension-info">
+                <p>ממד זה בוחן את היכולת למדוד ולנהל ביצועים ותוצאות. כולל:</p>
+                <ul>
+                    <li>מדידת ביצועים אפקטיבית</li>
+                    <li>שימוש במדדים לקבלת החלטות</li>
+                    <li>מעקב אחר תוצאות והשגת יעדים</li>
+                </ul>
+            </div>
+            <div class="input-group">
+                <label>דרג את הארגון בממד זה (1-5):</label>
+                <input type="number" id="score-4" min="1" max="5" step="1" required>
+            </div>
+            <button onclick="nextStep()">המשך לשלב הבא</button>
+        </div>
+
+        <!-- שלב 6: מחשבון עלויות -->
+        <div id="step6" class="step">
+            <h2>שלב 6: נתוני כוח אדם</h2>
+            <div class="dimension-info">
+                <p>הזן את הנתונים הבאים כדי לחשב את העלויות הנוכחיות והפוטנציאל לחיסכון:</p>
+            </div>
             <div class="input-group">
                 <label>מספר עובדים בארגון:</label>
                 <input type="number" id="employeeCount" min="1" value="100">
@@ -101,23 +217,48 @@
                 <label>משכורת חודשית ממוצעת (₪):</label>
                 <input type="number" id="avgSalary" min="0" value="15000">
             </div>
-            <button onclick="calculateCosts()">חשב עלויות</button>
-            
-            <div id="costResult" class="result" style="display: none;">
-                <div>סך עלויות גיוס שנתיות: <span id="totalCost">0</span> ₪</div>
-                <div class="cost-breakdown">
-                    <div>מספר עובדים שיש לגייס בשנה: <span id="replacementCount">0</span></div>
-                    <div>עלות גיוס לעובד: <span id="costPerEmployee">0</span> ₪</div>
-                    <div>אובדן פריון עבודה: <span id="productivityLoss">0</span> ₪</div>
-                </div>
-            </div>
+            <button onclick="showResults()">הצג תוצאות</button>
         </div>
 
-        <div id="chart"></div>
-        <div id="message"></div>
+        <!-- שלב 7: תוצאות והמלצות -->
+        <div id="step7" class="step">
+            <h2>תוצאות והמלצות</h2>
+            
+            <div id="chart"></div>
+            
+            <div id="costResult" class="result">
+                <h3>עלויות נוכחיות</h3>
+                <div class="calculation-explanation">
+                    <h4>כיצד מחושבות העלויות?</h4>
+                    <ul>
+                        <li>עלות גיוס לעובד = משכורת חודשית × 3</li>
+                        <li>אובדן פריון עבודה = משכורת חודשית × 2 × מספר העובדים המתחלפים</li>
+                        <li>סך עלויות = (עלות גיוס × מספר עובדים מתחלפים) + אובדן פריון</li>
+                    </ul>
+                </div>
+                <div>מספר עובדים שיש לגייס בשנה: <span id="replacementCount">0</span></div>
+                <div>עלות גיוס לעובד: <span id="costPerEmployee">0</span> ₪</div>
+                <div>אובדן פריון עבודה: <span id="productivityLoss">0</span> ₪</div>
+                <div>סך עלויות גיוס שנתיות: <span id="totalCost">0</span> ₪</div>
+            </div>
+
+            <div id="recommendations" class="recommendations">
+                <h3>המלצות לשיפור</h3>
+                <div id="recommendationsList"></div>
+            </div>
+
+            <div id="potentialSavings" class="result">
+                <h3>פוטנציאל חיסכון</h3>
+                <div id="savingsExplanation"></div>
+            </div>
+
+            <button onclick="restartAssessment()">התחל הערכה חדשה</button>
+        </div>
     </div>
 
     <script>
+        let currentStep = 1;
+        const totalSteps = 7;
         const dimensions = [
             "אסטרטגיה וכיוון",
             "יכולת הסתגלות",
@@ -126,19 +267,26 @@
             "מדדים ותוצאות"
         ];
 
-        const defaultScores = [0, 0, 0, 0, 0];
+        function updateProgressBar() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
 
-        // יצירת שדות הקלט
-        const scoresDiv = document.getElementById('scores');
-        dimensions.forEach((dim, i) => {
-            const div = document.createElement('div');
-            div.className = 'input-group';
-            div.innerHTML = `
-                <label>${dim}</label>
-                <input type="number" id="score-${i}" min="1" max="5" step="1" value="0">
-            `;
-            scoresDiv.appendChild(div);
-        });
+        function nextStep() {
+            // וידוא הזנת ערך בשלב הנוכחי
+            if (currentStep <= 5) {
+                const currentScore = document.getElementById(`score-${currentStep-1}`).value;
+                if (!currentScore || currentScore < 1 || currentScore > 5) {
+                    alert('נא להזין ציון בין 1 ל-5');
+                    return;
+                }
+            }
+
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            currentStep++;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            updateProgressBar();
+        }
 
         function createChart(scores) {
             const data = [{
@@ -162,51 +310,118 @@
             Plotly.newPlot('chart', data, layout);
         }
 
-        function updateChart() {
-            const scores = [];
-            for (let i = 0; i < dimensions.length; i++) {
-                const score = parseInt(document.getElementById(`score-${i}`).value);
-                if (isNaN(score) || score < 0 || score > 5) {
-                    showMessage('נא להזין ציונים תקינים (1-5)', 'error');
-                    return;
-                }
-                scores.push(score);
-            }
-
-            createChart(scores);
-            showMessage('הגרף עודכן בהצלחה', 'success');
-        }
-
         function calculateCosts() {
             const employeeCount = parseInt(document.getElementById('employeeCount').value);
             const turnoverRate = parseInt(document.getElementById('turnoverRate').value) / 100;
             const avgSalary = parseInt(document.getElementById('avgSalary').value);
 
-            if (isNaN(employeeCount) || isNaN(turnoverRate) || isNaN(avgSalary)) {
-                showMessage('נא להזין ערכים תקינים', 'error');
-                return;
-            }
-
             const replacementCount = Math.round(employeeCount * turnoverRate);
-            const costPerEmployee = avgSalary * 3; // עלות גיוס מוערכת כ-3 משכורות
-            const productivityLoss = avgSalary * 2 * replacementCount; // אובדן פריון של חודשיים לכל עובד
+            const costPerEmployee = avgSalary * 3;
+            const productivityLoss = avgSalary * 2 * replacementCount;
             const totalCost = (costPerEmployee * replacementCount) + productivityLoss;
 
-            document.getElementById('replacementCount').textContent = replacementCount;
-            document.getElementById('costPerEmployee').textContent = costPerEmployee.toLocaleString();
-            document.getElementById('productivityLoss').textContent = productivityLoss.toLocaleString();
-            document.getElementById('totalCost').textContent = totalCost.toLocaleString();
-            document.getElementById('costResult').style.display = 'block';
+            return {
+                replacementCount,
+                costPerEmployee,
+                productivityLoss,
+                totalCost
+            };
         }
 
-        function showMessage(text, type) {
-            const messageDiv = document.getElementById('message');
-            messageDiv.textContent = text;
-            messageDiv.className = type;
+        function generateRecommendations(scores) {
+            const recommendations = [];
+            const weakestAreas = dimensions
+                .map((dim, i) => ({ dimension: dim, score: scores[i] }))
+                .sort((a, b) => a.score - b.score)
+                .slice(0, 2);
+
+            weakestAreas.forEach(area => {
+                switch(area.dimension) {
+                    case "אסטרטגיה וכיוון":
+                        recommendations.push("פיתוח וטיוב תהליכי תכנון אסטרטגי");
+                        recommendations.push("שיפור תקשורת פנים-ארגונית של החזון והיעדים");
+                        break;
+                    case "יכולת הסתגלות":
+                        recommendations.push("פיתוח תהליכי חדשנות וגמישות ארגונית");
+                        recommendations.push("שיפור יכולות ניהול שינויים");
+                        break;
+                    case "תהליכים ומבנה":
+                        recommendations.push("ייעול תהליכי עבודה וצמצום בירוקרטיה");
+                        recommendations.push("התאמת המבנה הארגוני לאסטרטגיה");
+                        break;
+                    case "תרבות ולמידה":
+                        recommendations.push("פיתוח תכניות הכשרה והדרכה");
+                        recommendations.push("חיזוק תרבות של למידה מתמדת");
+                        break;
+                    case "מדדים ותוצאות":
+                        recommendations.push("שיפור מערכות מדידה וניטור ביצועים");
+                        recommendations.push("פיתוח תהליכי קבלת החלטות מבוססי נתונים");
+                        break;
+                }
+            });
+
+            return recommendations;
         }
 
-        // יצירת גרף ראשוני
-        createChart(defaultScores);
+        function calculatePotentialSavings(currentCosts, scores) {
+            const avgScore = scores.reduce((a, b) => a + b) / scores.length;
+            const potentialImprovement = (5 - avgScore) / 5;
+            const potentialSavings = currentCosts.totalCost * potentialImprovement * 0.4; // 40% מהעלויות ניתנות לחיסכון
+            return Math.round(potentialSavings);
+        }
+
+        function showResults() {
+            const scores = [];
+            for (let i = 0; i < dimensions.length; i++) {
+                scores.push(parseInt(document.getElementById(`score-${i}`).value));
+            }
+
+            const costs = calculateCosts();
+            document.getElementById('replacementCount').textContent = costs.replacementCount;
+            document.getElementById('costPerEmployee').textContent = costs.costPerEmployee.toLocaleString();
+            document.getElementById('productivityLoss').textContent = costs.productivityLoss.toLocaleString();
+            document.getElementById('totalCost').textContent = costs.totalCost.toLocaleString();
+
+            const recommendations = generateRecommendations(scores);
+            const recommendationsHtml = recommendations
+                .map(rec => `<div>• ${rec}</div>`)
+                .join('');
+            document.getElementById('recommendationsList').innerHTML = recommendationsHtml;
+
+            const potentialSavings = calculatePotentialSavings(costs, scores);
+            document.getElementById('savingsExplanation').innerHTML = `
+                <p>על ידי יישום ההמלצות לשיפור, הארגון יכול לחסוך עד <strong>${potentialSavings.toLocaleString()} ₪</strong> בשנה.</p>
+                <p>החיסכון מבוסס על:</p>
+                <ul>
+                    <li>הפחתת אחוזי עזיבה</li>
+                    <li>שיפור תהליכי גיוס וקליטה</li>
+                    <li>העלאת פריון העבודה</li>
+                </ul>
+            `;
+
+            createChart(scores);
+            nextStep();
+        }
+
+        function restartAssessment() {
+            currentStep = 1;
+            for (let i = 1; i <= totalSteps; i++) {
+                document.getElementById(`step${i}`).classList.remove('active');
+            }
+            document.getElementById('step1').classList.add('active');
+            updateProgressBar();
+
+            // איפוס כל השדות
+            for (let i = 0; i < dimensions.length; i++) {
+                document.getElementById(`score-${i}`).value = "";
+            }
+            document.getElementById('employeeCount').value = "100";
+            document.getElementById('turnoverRate').value = "15";
+            document.getElementById('avgSalary').value = "15000";
+        }
+
+        updateProgressBar();
     </script>
 </body>
+</html> 
 </html> 
