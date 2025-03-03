@@ -2,6 +2,10 @@
 
 מערכת web להערכה וניתוח ארגוני לפי מודל ADAPT. המערכת מאפשרת לארגונים ליצור ולשמור דוחות הערכה ולעקוב אחר התקדמותם.
 
+## גישה למערכת
+
+האפליקציה זמינה בכתובת: [https://hr-scorecard.onrender.com](https://hr-scorecard.onrender.com)
+
 ## תכונות
 
 - הצגת ציונים בגרף רדאר (Spider Chart)
@@ -17,7 +21,7 @@
 
 ## שימוש במערכת
 
-1. היכנס למערכת בכתובת: [https://yan-yanko.github.io/hr-scorecard/](https://yan-yanko.github.io/hr-scorecard/)
+1. היכנס למערכת בכתובת: [https://hr-scorecard.onrender.com](https://hr-scorecard.onrender.com)
 2. הזן את שם הארגון שלך
 3. מלא את הציונים לכל אחד מהממדים (בסולם 1-5)
 4. לחץ על "שמור ועדכן" כדי לשמור את הנתונים
