@@ -1,2 +1,4 @@
-dash==2.14.2
-plotly==5.18.0 
+dash>=2.15.0
+plotly==5.18.0
+pytest==8.0.0
+pytest-dash==2.3.0 
